@@ -7,7 +7,7 @@ import (
 )
 
 func ProductRoute(db *gorm.DB, route *gin.Engine) {
-	groupRoute := route.Group("/api/v1")
+	groupRoute := route.Group("/")
 	groupRoute.GET("/get-products", controllers.GetProducts)
 	groupRoute.GET("/show-product/:id", controllers.GetProduct)
 	groupRoute.GET("/baner-promo")
