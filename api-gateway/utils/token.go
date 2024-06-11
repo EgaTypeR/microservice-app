@@ -42,3 +42,31 @@ func GenerateToken(username string) (string, error) {
 
 	return tokenString, nil
 }
+
+func ValidateToken(tokenString string) (*models.Claims, error) {
+	jwtKey := os.Getenv("JWT_SECRET")
+	if jwtKey == "" {
+		return nil, errors.New("JWT_SECRET is not set")
+	}
+
+	claims := &models.Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(jwtKey), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, errors.New("Invalid token")
+	}
+
+	// Check if the token is blacklisted
+	ctx := context.Background()
+	_, err = RedisClient.Get(ctx, claims.ID).Result()
+	if err != nil {
+		return nil, errors.New("Token is blacklisted")
+	}
+
+	return claims, nil
+}
