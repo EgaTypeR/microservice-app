@@ -11,6 +11,4 @@ func ProductRoute(db *gorm.DB, route *gin.Engine) {
 	groupRoute.GET("/show-product")
 	groupRoute.GET("/baner-promo")
 	groupRoute.GET("/promo-product")
-	groupRoute.GET("/")
-
 }
