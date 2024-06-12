@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/EgaTypeR/microservice-app/product-service/models"
 	"github.com/EgaTypeR/microservice-app/product-service/utils"
@@ -70,7 +71,7 @@ func GetActiveFlashSale(c *gin.Context) {
 
 		flashSaleProductsJSON, err := json.Marshal(flashSaleProducts)
 		if err == nil {
-			utils.RedisClient.Set(ctx, "active_flash_sales", flashSaleProductsJSON, 0)
+			utils.RedisClient.Set(ctx, "active_flash_sales", flashSaleProductsJSON, time.Until(time.Now().Add(30*time.Minute)))
 		}
 
 		log.Println("Get data from database")

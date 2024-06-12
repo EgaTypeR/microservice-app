@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  product-service:
+    build:
+      context: ./ProductService
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=product-db
+      - DB_PORT=3306
+      - DB_USER=product_user
+      - DB_PASSWORD=0000
+      - DB_NAME=product_db
+
+  api-gateway:
+    build:
+      context: ./AuthService
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - JWT_SECRET=supersecret
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DB_HOST=root
+      - DB_PORT=3306
+      - DB_USER=auth_user
+      - DB_PASSWORD=0000
+      - DB_NAME=auth_db
+
+  product-db:
+    image: mysql:13
+    environment:
+      MYSQL_USER: product_user
+      MYSQL_PASSWORD: product_password
+      MYSQL_DB: product_db
+    volumes:
+      - product-db-data:/var/lib/mysql/data
+
+  auth-db:
+    image: mysql:13
+    environment:
+      MYSQL_USER: auth_user
+      MYSQL_PASSWORD: auth_password
+      MYSQL_DB: auth_db
+    volumes:
+      - auth-db-data:/var/lib/mysql/data
+
+  redis:
+    image: redis:6
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  product-db-data:
+  auth-db-data:
+  flash-sale-db-data:
+  redis-data:
